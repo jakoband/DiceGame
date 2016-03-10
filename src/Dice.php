@@ -4,15 +4,19 @@
 class Dice
 {
     /**
-     * @var array
+     * @var Color[]
      */
     private $colors;
 
     /**
-     * @param array $colors
+     * @param Color[] $colors
      */
     public function __construct(array $colors)
     {
+        if (count($colors) !== 6) {
+            throw new InvalidArgumentException('Exactly six colors expected');
+        }
+
         $this->colors = $colors;
     }
 

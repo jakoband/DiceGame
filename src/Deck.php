@@ -4,32 +4,42 @@
 class Deck
 {
     /**
-     * @var array
+     * @var Card[]
      */
-    private $colors;
+    private $cards = [];
 
     /**
-     * @param array $colors
+     * @param Card $card
      */
-    public function __construct(array $colors)
+    public function addCard(Card $card)
     {
-        $this->colors = $colors;
+        $this->cards[] = $card;
     }
 
     /**
-     * @return array
+     * @param Color $color
      */
-    public function createSetOfCards(){
+    public function turnCardsForColor(Color $color)
+    {
+        foreach ($this->cards as $card) {
+            if ((string) $card->getColor() === (string) $color) {
+                $card->turn();
+                return;
+            }
+        }
+    }
 
-        $colorIndexes = range(0, count($this->colors) - 1);
-        shuffle($colorIndexes);
-        array_pop($colorIndexes);
-
-        $set = [];
-        foreach ($colorIndexes as $index) {
-            $set[] = new Card($this->colors[$index]);
+    /**
+     * @return bool
+     */
+    public function areAllCardsTurned()
+    {
+        foreach($this->cards as $card) {
+            if (!$card->isTurned()) {
+                return false;
+            }
         }
 
-        return $set;
+        return true;
     }
 }

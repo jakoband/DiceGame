@@ -17,11 +17,10 @@ class Color
     }
 
     /**
-     * @param Color $color
-     * @return bool
+     * @return string
      */
-    public function isSameColorAs(Color $color)
+    public function __toString()
     {
-        return $this->color === $color->color;
+        return $this->color;
     }
 }

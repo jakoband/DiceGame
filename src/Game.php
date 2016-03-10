@@ -4,48 +4,58 @@
 class Game
 {
     /**
-     * @var Deck
-     */
-    private $deck;
-
-    /**
      * @var Dice
      */
     private $dice;
 
     /**
-     * @var array
+     * @var Player[]
      */
     private $players;
 
     /**
-     * @param Deck $deck
      * @param Dice $dice
-     * @param array $players
+     * @param Player[] $players
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(Deck $deck, Dice $dice, array $players)
+    public function __construct(Dice $dice, array $players)
     {
         if (count($players) < 2) {
             throw new InvalidArgumentException('At least two players required');
         }
 
-        $this->deck = $deck;
         $this->dice = $dice;
         $this->players = $players;
     }
 
-    public function start()
+    /**
+     * @param DeckFactory $deckFactory
+     */
+    public function dealCards(DeckFactory $deckFactory)
     {
-        $this->concatenatePlayerCircle();
-        $this->players[0]->play($this->deck, $this->dice);
+        foreach($this->players as $player)
+        {
+            $player->setDeck($deckFactory->createNewDeck());
+        }
     }
 
-    private function concatenatePlayerCircle()
+    /**
+     * @return string
+     */
+    public function getWinner()
     {
-        foreach ($this->players as $index => $player) {
-            $player->setNextPlayer($this->players[($index + 1) % count($this->players)]);
+        $numberOfPlayers = count($this->players);
+        $index = 0;
+
+        while (true) {
+            $currentPlayer = $this->players[$index % $numberOfPlayers];
+            $currentPlayer->roll($this->dice);
+
+            if ($currentPlayer->getDeck()->areAllCardsTurned()) {
+                return $currentPlayer->getName();
+            }
+            $index++;
         }
     }
 }

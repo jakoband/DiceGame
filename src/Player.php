@@ -9,14 +9,9 @@ class Player
     private $name;
 
     /**
-     * @var Card
+     * @var Deck $deck
      */
-    private $cards;
-
-    /**
-     * @var Player
-     */
-    private $nextPlayer;
+    private $deck;
 
     /**
      * @param string $name
@@ -27,91 +22,25 @@ class Player
     }
 
     /**
-     * @return Player
-     * @throws Exception
-     */
-    public function getNextPlayer(): Player
-    {
-        if (!$this->nextPlayer) {
-            throw new \Exception('Player must have a next player');
-        }
-
-        return $this->nextPlayer;
-    }
-    /**
-     * @param Player $player
-     */
-    public function setNextPlayer(Player $player)
-    {
-        $this->nextPlayer = $player;
-    }
-
-    /**
-     * @param Deck $deck
-     * @param Dice $dice
-     */
-    public function play(Deck $deck, Dice $dice)
-    {
-        if (!$this->hasCards()) {
-            $this->takeCards($deck);
-        }
-        $this->playTurn($deck, $dice);
-    }
-
-    private function hasCards ()
-    {
-        return count($this->cards) > 0;
-    }
-
-    /**
-     * @param Deck $deck
-     * @param Dice $dice
-     * @throws Exception
-     */
-    public function playTurn(Deck $deck, Dice $dice)
-    {
-        $this->turnFirstCardWithColor($dice->roll());
-
-        if ($this->hasWon()) {
-            printf('Player "%s" has won!', $this->name);
-            echo PHP_EOL;
-        } else {
-            $this->getNextPlayer()->play($deck, $dice);
-        }
-    }
-
-    /**
      * @param Deck $deck
      */
-    public function takeCards(Deck $deck)
+    public function setDeck(Deck $deck)
     {
-        $this->cards = $deck->createSetOfCards();
+        $this->deck = $deck;
     }
 
-    /**
-     * @param Color $color
-     */
-    private function turnFirstCardWithColor(Color $color)
+    public function getDeck()
     {
-        foreach ($this->cards as $card) {
-            if ($card->getColor()->isSameColorAs($color)) {
-                $card->turn();
-                return;
-            }
-        }
+        return $this->deck;
     }
 
-    /**
-     * @return bool
-     */
-    private function hasWon()
+    public function roll(Dice $dice)
     {
-        foreach($this->cards as $card) {
-            if (!$card->isTurned()) {
-                return false;
-            }
-        }
+        $this->deck->turnCardsForColor($dice->roll());
+    }
 
-        return true;
+    public function getName()
+    {
+        return $this->name;
     }
 }

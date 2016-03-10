@@ -37,7 +37,8 @@ class Card
         return $this->isTurned;
     }
 
-    public function turn(){
+    public function turn()
+    {
         $this->isTurned = true;
     }
 }
