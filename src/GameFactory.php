@@ -10,7 +10,6 @@ class GameFactory
 
     /**
      * @param array $colorNames
-     * @internal param Color[] $colors
      */
     public function __construct(array $colorNames)
     {
