@@ -24,30 +24,33 @@ class Player
     }
 
     /**
-     * @param Dice $dice
-     */
-    public function roll(Dice $dice)
-    {
-        $matchingCard = $this->deck->getCardThatMatches($dice->roll());
-
-        if($matchingCard) {
-            $matchingCard->turn();
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWinner()
-    {
-        return !$this->deck->isCardUnturned();
-    }
-
-    /**
      * @return string
      */
     public function getName()
     {
         return $this->name;
     }
+
+    /**
+     * @return Deck
+     */
+    public function getDeck()
+    {
+        return $this->deck;
+    }
+
+    /**
+     * @param Color $color
+     */
+    public function turnCardWithColor(Color $color)
+    {
+        foreach ($this->deck->getCards() as $card) {
+            if ((string) $card->getColor() === (string) $color) {
+                $card->turn();
+
+                return;
+            }
+        }
+    }
+
 }

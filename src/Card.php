@@ -16,7 +16,7 @@ class Card
     /**
      * @param Color $color
      */
-    public function __construct($color)
+    public function __construct(Color $color)
     {
         $this->color = $color;
     }

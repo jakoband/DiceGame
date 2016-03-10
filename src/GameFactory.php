@@ -6,67 +6,65 @@ class GameFactory
     /**
      * @var Color[]
      */
-    private $colors;
+    private $colors = array();
 
     /**
-     * @param array $colorNames
+     * @param GameConfigurationInterface $gameConfiguration
      */
-    public function __construct(array $colorNames)
+    public function __construct(GameConfigurationInterface $gameConfiguration)
     {
-        if (count($colorNames) > 6) {
+        if (count($gameConfiguration->getPlayerNames()) < 2) {
+            throw new InvalidArgumentException('At least two players required');
+        }
+
+        if (count($gameConfiguration->getColorNames()) > 6) {
             throw new InvalidArgumentException('Maximum of 6 colors allowed');
         }
 
-        $this->colors = $this->createColors($colorNames); // better way?
+        $this->gameConfiguration = $gameConfiguration;
     }
 
     /**
-     * @param $colorNames
      * @return Color[]
      */
-    private function createColors($colorNames)
+    private function createColors()
     {
-        $colors = [];
-        foreach ($colorNames as $colorName) {
-            $colors[] = new Color($colorName);
+        if (count($this->colors) === 0) {
+            foreach ($this->gameConfiguration->getColorNames() as $colorName) {
+                $this->colors[] = new Color($colorName);
+            }
         }
-        return $colors;
+
+        return $this->colors;
     }
+
 
     /**
      * @return Dice
      */
     public function createDice()
     {
-        return new Dice($this->colors);
+        return new Dice($this->createColors());
     }
 
     /**
-     * @param string[] $playerNames
-     * @return Player[]
+     * @return PlayerCollection
      */
-    public function createPlayers(array $playerNames)
+    public function createPlayerCollection()
     {
-        if (count($playerNames) < 2) {
-            throw new InvalidArgumentException('At least two players required');
+        $playerCollection = new PlayerCollection();
+        foreach ($this->gameConfiguration->getPlayerNames() as $playerName) {
+            $playerCollection->addPlayer(new Player($playerName, $this->createDeck()));
         }
-        // player name as value object for validation?
-
-        $players = [];
-        foreach ($playerNames as $playerName) {
-            $players[] = new Player($playerName, $this->createDeck());
-        }
-
-        return $players;
+        return $playerCollection;
     }
-
 
     /**
      * @return Deck
      */
     private function createDeck()
     {
-        $colorIndexes = array_rand($this->colors, count($this->colors) - 1);
+        $colorIndexes = array_rand($this->createColors(), count($this->colors) - 1);
         $cards = [];
 
         foreach ($colorIndexes as $index) {

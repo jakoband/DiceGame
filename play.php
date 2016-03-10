@@ -2,16 +2,16 @@
 
 require __DIR__ . '/src/autoload.php';
 
-
-
 $colorNames = ['red', 'blue', 'yellow', 'green', 'pink', 'brown'];
 $playerNames = ['Alice', 'Carol', 'Bob'];
 
-$gameFactory = new GameFactory($colorNames);
+$diceGameConfiguration = new DiceGameConfiguration($playerNames, $colorNames);
 
-$players = $gameFactory->createPlayers($playerNames);
+$gameFactory = new GameFactory($diceGameConfiguration);
+
+$playerCollection = $gameFactory->createPlayerCollection();
 $dice = $gameFactory->createDice();
 
-$game = new Game($dice, $players);
+$game = new Game($dice, $playerCollection);
 $game->play();
 

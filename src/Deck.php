@@ -9,32 +9,17 @@ class Deck
     private $cards = [];
 
     /**
-     * @param $cards
+     * @param Card[] $cards
      */
-    public function __construct($cards)
+    public function __construct(array $cards)
     {
         $this->cards = $cards;
     }
 
     /**
-     * @param Color $color
-     * @return Card|null
-     */
-    public function getCardThatMatches(Color $color)
-    {
-        foreach ($this->cards as $card) {
-            if ((string) $card->getColor() === (string) $color) {
-                return $card;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @return bool
      */
-    public function isCardUnturned()
+    public function hasUnturned()
     {
         foreach($this->cards as $card) {
             if (!$card->isTurned()) {
@@ -43,5 +28,13 @@ class Deck
         }
 
         return false;
+    }
+
+    /**
+     * @return Card[]
+     */
+    public function getCards()
+    {
+        return $this->cards;
     }
 }
