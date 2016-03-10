@@ -15,30 +15,37 @@ class Player
 
     /**
      * @param string $name
-     */
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @param Deck $deck
      */
-    public function setDeck(Deck $deck)
+    public function __construct(string $name, Deck $deck)
     {
+        $this->name = $name;
         $this->deck = $deck;
     }
 
-    public function getDeck()
-    {
-        return $this->deck;
-    }
-
+    /**
+     * @param Dice $dice
+     */
     public function roll(Dice $dice)
     {
-        $this->deck->turnCardsForColor($dice->roll());
+        $matchingCard = $this->deck->getCardThatMatches($dice->roll());
+
+        if($matchingCard) {
+            $matchingCard->turn();
+        }
     }
 
+    /**
+     * @return bool
+     */
+    public function isWinner()
+    {
+        return !$this->deck->isCardUnturned();
+    }
+
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
