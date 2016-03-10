@@ -1,6 +1,6 @@
 <?php
 
-require 'autoload.php';
+require __DIR__ . '/src/autoload.php';
 
 $players = [
     new Player('Alice'),
@@ -17,9 +17,12 @@ $colors = [
     new Color('brown'),
 ];
 
+$deckFactory = new DeckFactory($colors);
 $dice = new Dice($colors);
-$deck = new Deck($colors);
-$game = new Game($deck, $dice, $players);
+$game = new Game($dice, $players);
 
-$game->start();
+$game->dealCards($deckFactory);
+
+echo $game->getWinner();
+echo PHP_EOL;
 
