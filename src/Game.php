@@ -9,53 +9,60 @@ class Game
     private $dice;
 
     /**
-     * @var Player[]
+     * @var PlayerCollection
      */
-    private $players;
+    private $playerCollection;
 
     /**
      * @param Dice $dice
-     * @param Player[] $players
-     *
-     * @throws InvalidArgumentException
+     * @param PlayerCollection $playerCollection
      */
-    public function __construct(Dice $dice, array $players)
+    public function __construct(Dice $dice, PlayerCollection $playerCollection)
     {
-        if (count($players) < 2) {
-            throw new InvalidArgumentException('At least two players required');
-        }
-
         $this->dice = $dice;
-        $this->players = $players;
+        $this->playerCollection = $playerCollection;
     }
 
     /**
-     * @param DeckFactory $deckFactory
+     * @throws Exception
      */
-    public function dealCards(DeckFactory $deckFactory)
+    public function play()
     {
-        foreach($this->players as $player)
-        {
-            $player->setDeck($deckFactory->createNewDeck());
-        }
-    }
+        while(true) {
+            $currentPlayer = $this->playerCollection->getNextPlayer();
+            $colorRolledDice = $this->dice->roll();
 
-    /**
-     * @return string
-     */
-    public function getWinner()
-    {
-        $numberOfPlayers = count($this->players);
-        $index = 0;
+            if ($this->hasPlayerCardWithColor($currentPlayer, $colorRolledDice)) {
+                $currentPlayer->turnCardWithColor($colorRolledDice);
 
-        while (true) {
-            $currentPlayer = $this->players[$index % $numberOfPlayers];
-            $currentPlayer->roll($this->dice);
-
-            if ($currentPlayer->getDeck()->areAllCardsTurned()) {
-                return $currentPlayer->getName();
+                if ($this->isPlayerWinner($currentPlayer)) {
+                    echo $currentPlayer->getName();
+                    break;
+                }
             }
-            $index++;
         }
+    }
+
+    /**
+     * @param Player $player
+     * @param Color $color
+     * @return bool
+     */
+    private function hasPlayerCardWithColor(Player $player, Color $color)
+    {
+        foreach ($player->getDeck()->getCards() as $card) {
+            if ((string) $card->getColor() === (string) $color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPlayerWinner(Player $player)
+    {
+        return !$player->getDeck()->hasUnturned();
     }
 }

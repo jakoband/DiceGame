@@ -9,37 +9,32 @@ class Deck
     private $cards = [];
 
     /**
-     * @param Card $card
+     * @param Card[] $cards
      */
-    public function addCard(Card $card)
+    public function __construct(array $cards)
     {
-        $this->cards[] = $card;
-    }
-
-    /**
-     * @param Color $color
-     */
-    public function turnCardsForColor(Color $color)
-    {
-        foreach ($this->cards as $card) {
-            if ((string) $card->getColor() === (string) $color) {
-                $card->turn();
-                return;
-            }
-        }
+        $this->cards = $cards;
     }
 
     /**
      * @return bool
      */
-    public function areAllCardsTurned()
+    public function hasUnturned()
     {
         foreach($this->cards as $card) {
             if (!$card->isTurned()) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
+    }
+
+    /**
+     * @return Card[]
+     */
+    public function getCards()
+    {
+        return $this->cards;
     }
 }

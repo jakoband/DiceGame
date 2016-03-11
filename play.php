@@ -2,27 +2,16 @@
 
 require __DIR__ . '/src/autoload.php';
 
-$players = [
-    new Player('Alice'),
-    new Player('Bob'),
-    new Player('Carol'),
-];
+$colorNames = ['red', 'blue', 'yellow', 'green', 'pink', 'brown'];
+$playerNames = ['Alice', 'Carol', 'Bob'];
 
-$colors = [
-    new Color('red'),
-    new Color('blue'),
-    new Color('yellow'),
-    new Color('green'),
-    new Color('pink'),
-    new Color('brown'),
-];
+$diceGameConfiguration = new DiceGameConfiguration($playerNames, $colorNames);
 
-$deckFactory = new DeckFactory($colors);
-$dice = new Dice($colors);
-$game = new Game($dice, $players);
+$gameFactory = new GameFactory($diceGameConfiguration);
 
-$game->dealCards($deckFactory);
+$playerCollection = $gameFactory->createPlayerCollection();
+$dice = $gameFactory->createDice();
 
-echo $game->getWinner();
-echo PHP_EOL;
+$game = new Game($dice, $playerCollection);
+$game->play();
 
